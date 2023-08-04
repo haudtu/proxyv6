@@ -44,6 +44,10 @@ deny *.hotmail.com
 deny yo.fan
 deny *.live.com
 $(awk -F "/" '{print "auth none\n" \
+"deny *.hotmail.com \n" \
+"deny *.live.com \n" \
+"deny *.microsoft.com \n" \
+"deny yo.fan \n" \
 "allow * \n" \
 "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
