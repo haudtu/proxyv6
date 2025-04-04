@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 random() {
     tr </dev/urandom -dc A-Za-z0-9 | head -c5
     echo
@@ -22,9 +22,9 @@ install_3proxy() {
     make -f Makefile.Linux
     mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
     mv /3proxy/3proxy-0.9.4/bin/3proxy /usr/local/etc/3proxy/bin/
-    wget https://raw.githubusercontent.com/xlandgroup/ipv4-ipv6-proxy/master/scripts/3proxy.service-Centos8 --output-document=/3proxy/3proxy-0.9.4/scripts/3proxy.service2
-    cp /3proxy/3proxy-0.9.4/scripts/3proxy.service2 /usr/lib/systemd/system/3proxy.service
-    systemctl link /usr/lib/systemd/system/3proxy.service
+    wget https://raw.githubusercontent.com/xlandgroup/ipv4-ipv6-proxy/master/scripts/3proxy.service-Ubuntu --output-document=/3proxy/3proxy-0.9.4/scripts/3proxy.service2
+    cp /3proxy/3proxy-0.9.4/scripts/3proxy.service2 /etc/systemd/system/3proxy.service
+    systemctl link /etc/systemd/system/3proxy.service
     systemctl daemon-reload
     # systemctl enable 3proxy
     echo "* hard nofile 999999" >> /etc/security/limits.conf
@@ -35,8 +35,8 @@ install_3proxy() {
     echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
     echo "net.ipv6.ip_nonlocal_bind = 1" >> /etc/sysctl.conf
     sysctl -p
-    systemctl stop firewalld
-    systemctl disable firewalld
+    systemctl stop ufw
+    systemctl disable ufw
 
     cd $WORKDIR
 }
@@ -86,7 +86,7 @@ upload_proxy() {
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "s1teamdn/EpkGBHzVxqXRLWs/$IP4/$port/$(gen64 $IP6)"
+        echo "admin/123456/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
@@ -103,7 +103,8 @@ EOF
 }
 
 echo "installing apps"
-yum -y install gcc net-tools bsdtar zip make >/dev/null
+apt-get update
+apt-get -y install gcc net-tools bsdtar zip make wget curl iptables >/dev/null
 
 install_3proxy
 
